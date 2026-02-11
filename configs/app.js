@@ -1,3 +1,5 @@
+import { deleteFileOnError } from '../middlewares/delete-file-on-error.js';
+
 'use strict'
 
 import express from 'express';
@@ -25,7 +27,7 @@ const routes = (app) =>{{}
 
     app.use(`${BASE_PATH}/fields`, fieldsRoutes);
 
-    app.get('${BASE_PATH}/Health', (request, response) =>{
+    app.get(`${BASE_PATH}/Health`, (request, response) =>{
         response.status(200).json({
             status: 'Healthy',
             timestamp: new Date().toISOString(),
@@ -39,12 +41,23 @@ const routes = (app) =>{{}
             message: 'Endpoint no encontrado en Admin API'
         })
     })
+    app.use(deleteFileOnError);
+
+    app.use((err, req, res, next) => {
+        console.error("ERROR GLOBAL:", err);
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    });
+
 }
 
 export const initServer = async () =>{
     const app = express();
     const PORT = process.env.PORT;
-    app.set('trus proxy', 1);
+    app.set('trust proxy', 1);
 
     try {
         await dbConnection();
@@ -53,7 +66,7 @@ export const initServer = async () =>{
 
         app.listen(PORT, ()=>{
             console.log(`KinalSport Admin Server running on port ${PORT}`);
-            console.log(`Health check: http://localhost:${PORT}${BASE_PATH}/health`);
+            console.log(`Health check: http://localhost:${PORT}${BASE_PATH}/Health`);
         });
 
     } catch (error) {

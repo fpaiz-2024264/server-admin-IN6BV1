@@ -1,7 +1,7 @@
 'use strict';
 
 import mongoose from "mongoose";
-import fieldModel from "./field.model.js";
+
 
 const fieldSchema = mongoose. Schema(
     {
@@ -54,7 +54,7 @@ const fieldSchema = mongoose. Schema(
     }
     
 )
-fieldSchema.index({ isAcive: 1});
+fieldSchema.index({ isActive: 1});
 fieldSchema.index({ fieldType: 1});
 fieldSchema.index({ isActive: 1, fieldType: 1});
  
